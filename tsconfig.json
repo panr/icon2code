@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "typeRoots": [
+      "@types",
+      "node_modules/@types"
+    ],
+    "baseUrl": ".",
+  },
+  "types": [
+    "node"
+  ]
+}

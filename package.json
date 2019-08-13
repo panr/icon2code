@@ -1,0 +1,31 @@
+{
+  "name": "icons",
+  "version": "1.0.0",
+  "description": "Simple plugin to generate icons data from canvas",
+  "main": "code.js",
+  "author": "Radosław Kozieł (@panr)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "webpack --mode=development --watch",
+    "build": "webpack --mode=production"
+  },
+  "devDependencies": {
+    "@types/clipboard": "^2.0.1",
+    "@types/node": "^12.7.1",
+    "@types/tinycolor2": "^1.4.2",
+    "clipboard": "^2.0.4",
+    "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
+    "html-webpack-inline-source-plugin": "^0.0.10",
+    "html-webpack-plugin": "^3.2.0",
+    "prettier": "^1.18.2",
+    "style-loader": "^1.0.0",
+    "tinycolor2": "^1.4.1",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "url-loader": "^2.1.0",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {}
+}

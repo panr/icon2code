@@ -1,0 +1,7 @@
+{
+  "name": "Icon2Code",
+  "id": "741549820671978943",
+  "api": "1.0.0",
+  "main": "./dist/code.js",
+  "ui": "./dist/ui.html"
+}

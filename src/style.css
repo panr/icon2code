@@ -1,0 +1,170 @@
+@import url('https://rsms.me/inter/inter.css');
+
+:root {
+  --figmaBlue: #1DA4FC;
+  --figmaBorder: #e5e5e5;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: white;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.inner {
+  flex: 1;
+  padding: 15px 15px 0;
+}
+
+footer {
+  display: flex;
+  flex: 0 0 auto;
+  padding: 15px;
+}
+
+button {
+  display: flex;
+  justify-content: center;
+  font-size: 12px;
+  background: white;
+  border: 1px solid var(--figmaBorder);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  outline: none;
+}
+
+button.primary {
+  background: var(--figmaBlue);
+  border-color: var(--figmaBlue);
+  color: white;
+  flex: 1;
+  margin-right: 10px;
+}
+
+button:disabled {
+  background: #eaeaea;
+  border-color: #eaeaea;
+  color: #999;
+}
+
+.inner__info {
+  text-align: center;
+}
+
+.inner__info h4 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logo {
+  display: block;
+  max-width: 100px;
+  margin: 0 auto 20px;
+}
+
+pre:not(:empty) {
+  border: 1px solid var(--figmaBorder);
+  padding: 10px;
+  margin: 10px 0 0;
+  font-size: 12px;
+  max-height: 200px;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+#code-container {
+  position: relative;
+}
+
+#copy-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+#error:not(:empty) {
+  background: #ffd5d5;
+  color: #8a4040;
+  font-size: 13px;
+  display: table;
+  margin: 10px auto 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.highlighted {
+  background: #ffeac3;
+  cursor: help;
+}
+
+.success {
+  background: #d4fdd9;
+  color: #3d8a55;
+  font-size: 13px;
+  display: table;
+  margin: 10px auto 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: help;
+}
+
+.loader,
+.loader:after {
+  display: inline-block;
+  border-radius: 50%;
+  width: .9em;
+  height: .9em;
+}
+
+.loader {
+  margin-left: 10px;
+  position: relative;
+  border-top: 2px solid rgba(255, 255, 255, 0.4);
+  border-right: 2px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+  border-left: 2px solid white;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+}
+
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.hidden {
+  display: none;
+}
