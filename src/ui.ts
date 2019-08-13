@@ -19,13 +19,18 @@ const setErrorMessageFor = ({ type, items }: { type: string; items: string }) =>
   }
 
   if (type === 'icons') {
-    return `Oops... Probably these icons are not flattened or frame has more than one element inside: <strong>${items}</strong>.
+    return `Oops... Something went wrong with: <strong>${items}</strong>.
+    <br><br>
+    Please make sure that:
+    a) frame has only one element inside;
+    b) the element is flattened;
+    c) the element is a vector type (no groups, wrappers etc.);
     <br><br>
     <small>Tip! Hide frame to skip it.</small>`
   }
 
   if (type === 'names') {
-    return `Icon names already exist: <strong>${items}</strong>.`
+    return `Duplicated frame names: <strong>${items}</strong>.`
   }
 }
 

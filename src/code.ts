@@ -16,12 +16,11 @@ const message: Message = {
 const icons = {}
 const iconNamesWithError = []
 const iconsWithSameName = []
-const frameNamesWithError = figma.currentPage.children
-  .filter(child => child.type === 'FRAME' && child.visible && !child.children.length)
+const frames = figma.currentPage.children.filter(child => child.type === 'FRAME' && child.visible)
+const emptyFrames = frames
+  .filter(frame => frame.type === 'FRAME' && !frame.children.length)
   .map(frame => frame.name)
-const properFrames = figma.currentPage.children.filter(
-  child => child.type === 'FRAME' && child.visible && child.children.length,
-)
+const framesWithChildren = frames.filter(child => child.type === 'FRAME' && child.children.length)
 
 figma.showUI(__html__, initialModalSize)
 
@@ -30,23 +29,24 @@ figma.ui.onmessage = async msg => {
     await figma.ui.resize(initialModalSize.width, msg.innerHeight + 65 || initialModalSize.height)
 
   if (msg.type === 'init') {
-    message.counter = properFrames.length.toString()
+    message.counter = frames.length.toString()
     figma.ui.postMessage(message)
   }
 
   if (msg.type === 'generate') {
-    if (properFrames) {
-      properFrames.forEach(frame => {
+    if (framesWithChildren) {
+      framesWithChildren.forEach(frame => {
         // prevent TS errors
         if (frame.type !== 'FRAME') {
           return
         }
 
-        if (frame.children.length > 1) {
+        const child = frame.children[0]
+
+        // Handle errors
+        if (frame.children.length > 1 || child.type !== 'VECTOR') {
           iconNamesWithError.push(frame.name)
         }
-
-        const child = frame.children[0]
 
         // prevent TS errors
         if (child.type !== 'VECTOR') {
@@ -81,6 +81,7 @@ figma.ui.onmessage = async msg => {
           }
         }
 
+        // Handle errors
         if (icons[name]) {
           iconsWithSameName.push(name)
         }
@@ -96,13 +97,14 @@ figma.ui.onmessage = async msg => {
       })
 
       // Handle errors
-      if (frameNamesWithError.length) {
-        message.errorFrames = frameNamesWithError
+      if (emptyFrames.length) {
+        message.errorFrames = emptyFrames
         figma.ui.postMessage(message)
 
         return
       }
 
+      // Handle errors
       if (iconNamesWithError.length) {
         message.errorIcons = iconNamesWithError
         figma.ui.postMessage(message)
@@ -110,6 +112,7 @@ figma.ui.onmessage = async msg => {
         return
       }
 
+      // Handle errors
       if (iconsWithSameName.length) {
         message.errorNames = iconsWithSameName
         figma.ui.postMessage(message)
