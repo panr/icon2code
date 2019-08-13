@@ -1,3 +1,5 @@
+![Cover Image](https://www.dropbox.com/s/1hsb8p8pvp8u368/cover.png?raw=1)
+
 ## For designers
 Easily create a JSON file for your fellow developers with everything they need to create a custom Icon component using their favorite framework or library (React, Angular, Vue etc.). No exports, copying and pasting files, no code cleaning or additional optimizations.
 
