@@ -98,7 +98,7 @@ generateButton.onclick = () => {
     loader.classList.add('hidden')
     generateButtonText.classList.remove('hidden')
     parent.postMessage({ pluginMessage: { innerHeight: inner.offsetHeight } }, '*')
-  }, 100)
+  }, 0)
 }
 
 cancelButton.onclick = () => {

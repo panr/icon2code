@@ -24,9 +24,9 @@ const framesWithChildren = frames.filter(child => child.type === 'FRAME' && chil
 
 figma.showUI(__html__, initialModalSize)
 
-figma.ui.onmessage = async msg => {
-  const setProperHeight = async () =>
-    await figma.ui.resize(initialModalSize.width, msg.innerHeight + 65 || initialModalSize.height)
+figma.ui.onmessage = msg => {
+  const setProperHeight = () =>
+    figma.ui.resize(initialModalSize.width, msg.innerHeight + 65 || initialModalSize.height)
 
   if (msg.type === 'init') {
     message.counter = frames.length.toString()
