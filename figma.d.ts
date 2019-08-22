@@ -682,3 +682,5 @@ interface Message {
   errorNames: string[]
   errorFrames: string[]
 }
+
+type ProperItemNode = FrameNode | ComponentNode | InstanceNode

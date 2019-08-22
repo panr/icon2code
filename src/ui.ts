@@ -15,22 +15,22 @@ const loader = document.getElementById('loader')
 
 const setErrorMessageFor = ({ type, items }: { type: string; items: string }) => {
   if (type === 'frames') {
-    return `Please check these frames: <strong>${items}</strong>. Probably they are empty or contain non-vector elements.`
+    return `Please check these items: <strong>${items}</strong>. Probably they are empty or contain non-vector elements.`
   }
 
   if (type === 'icons') {
     return `Oops... Something went wrong with: <strong>${items}</strong>.
     <br><br>
     Please make sure that:
-    a) frame has only one element inside;
-    b) the element is flattened;
-    c) the element is a vector type (no groups, wrappers etc.);
+    a) item has only one child inside;
+    b) the child is flattened;
+    c) the child is a vector type (no groups, wrappers etc.);
     <br><br>
-    <small>Tip! Hide frame to skip it.</small>`
+    <small>Tip! Hide item to skip it.</small>`
   }
 
   if (type === 'names') {
-    return `Duplicated frame names: <strong>${items}</strong>.`
+    return `Duplicated item names: <strong>${items}</strong>.`
   }
 }
 

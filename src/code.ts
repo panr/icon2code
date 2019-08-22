@@ -16,11 +16,17 @@ const message: Message = {
 const icons = {}
 const iconNamesWithError = []
 const iconsWithSameName = []
-const frames = figma.currentPage.children.filter(child => child.type === 'FRAME' && child.visible)
-const emptyFrames = frames
-  .filter(frame => frame.type === 'FRAME' && !frame.children.length)
+const isProper = (item: ProperItemNode) =>
+  item.type === 'FRAME' || item.type === 'COMPONENT' || item.type === 'INSTANCE'
+const frames = figma.currentPage.children.filter(
+  (child: ProperItemNode) => isProper(child) && child.visible,
+)
+const emptyFramesOrComponents = frames
+  .filter((frame: ProperItemNode) => isProper(frame) && !frame.children.length)
   .map(frame => frame.name)
-const framesWithChildren = frames.filter(child => child.type === 'FRAME' && child.children.length)
+const framesOrComponentsWithChildren = frames.filter(
+  (child: ProperItemNode) => isProper(child) && child.children.length,
+)
 
 figma.showUI(__html__, initialModalSize)
 
@@ -34,10 +40,10 @@ figma.ui.onmessage = msg => {
   }
 
   if (msg.type === 'generate') {
-    if (framesWithChildren) {
-      framesWithChildren.forEach(frame => {
+    if (framesOrComponentsWithChildren) {
+      framesOrComponentsWithChildren.forEach(frame => {
         // prevent TS errors
-        if (frame.type !== 'FRAME') {
+        if (frame.type !== 'FRAME' && frame.type !== 'COMPONENT' && frame.type !== 'INSTANCE') {
           return
         }
 
@@ -97,8 +103,8 @@ figma.ui.onmessage = msg => {
       })
 
       // Handle errors
-      if (emptyFrames.length) {
-        message.errorFrames = emptyFrames
+      if (emptyFramesOrComponents.length) {
+        message.errorFrames = emptyFramesOrComponents
         figma.ui.postMessage(message)
 
         return
