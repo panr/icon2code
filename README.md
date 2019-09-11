@@ -16,9 +16,11 @@ Tip! Hidden frames are skipped by the plugin
 
 ---
 **Custom components & examples:**
+
 1. React — [https://codesandbox.io/s/react-icon-component-3giqg](https://codesandbox.io/s/react-icon-component-3giqg)
-2. Angular — coming soon...
-3. Vue — coming soon...
+2. Angular (by @foull) — [https://codesandbox.io/s/angular-icon-component-pg7py](https://codesandbox.io/s/angular-icon-component-pg7py)
+3. Vue — [https://codesandbox.io/s/vue-icon-component-neclt](https://codesandbox.io/s/vue-icon-component-neclt)
+4. Svelte — [https://codesandbox.io/s/svelte-icon-component-5qyr3](https://codesandbox.io/s/svelte-icon-component-5qyr3)
 ---
 
 **Icon data model:**
