@@ -55,3 +55,9 @@ If you have an idea how to improve this plugin, please raise a Pull Request 😎
 2. Run `yarn dev`.
 3. Link this plugin with Figma (Go to Plugins -> Development -> Create new plugin -> Drag manifest.json)
 4. Do your magic 🤩
+
+## Sponsoring
+
+If you like my work and want to support the development of the project, now you can! Just:
+
+<a href="https://www.buymeacoffee.com/panr" target="_blank"><img src="https://res.cloudinary.com/panr/image/upload/v1579374705/buymeacoffee_y6yvov.svg" alt="Buy Me A Coffee" ></a>
