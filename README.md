@@ -1,5 +1,7 @@
 ![Cover Image](https://www.dropbox.com/s/3z2oij3vsufpwa6/cover.png?raw=1)
 
+<a href="https://www.buymeacoffee.com/panr" target="_blank"><img src="https://res.cloudinary.com/panr/image/upload/v1579374705/buymeacoffee_y6yvov.svg" alt="Buy Me A Coffee" ></a>
+
 **For designers**: Easily create a JSON file for your fellow developers with everything they need to create a custom Icon component using their favorite framework or library (React, Angular, Vue etc.). No exports, copying and pasting files, no code cleaning or additional optimizations.
 
 **For developers**: Imagine that you receive a bunch of icons from your fellow designer. You have to extract needed data from all those SVG files... It's time consuming... Forget about it. Now you can easily export all icons data to a JSON file with one click! If you have a custom Icon component in React, Angular or Vue — that's all you need.
