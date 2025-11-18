@@ -1,106 +1,150 @@
-import './style.css'
-import Clipboard from 'clipboard'
+import "./style.css";
+import Clipboard from "clipboard";
 
-const inner = document.getElementById('inner')
-const iconsCounter = document.getElementById('icons-counter')
-const code = document.getElementById('code')
-const codeContainer = document.getElementById('code-container')
-const frames = document.getElementById('frames')
-const framesText = document.getElementById('frames-text')
-const errors = document.getElementById('error')
-const generateButton = document.getElementById('generate')
-const generateButtonText = document.getElementById('generate-button-text')
-const cancelButton = document.getElementById('cancel')
-const loader = document.getElementById('loader')
+document.addEventListener("DOMContentLoaded", () => {
+  const inner = document.getElementById("inner");
+  const iconsCounter = document.getElementById("icons-counter");
+  const code = document.getElementById("code");
+  const codeContainer = document.getElementById("code-container");
+  const frames = document.getElementById("frames");
+  const framesText = document.getElementById("frames-text");
+  const errors = document.getElementById("error");
+  const generateButton = document.getElementById("generate");
+  const generateButtonText = document.getElementById("generate-button-text");
+  const cancelButton = document.getElementById("cancel");
+  const loader = document.getElementById("loader");
+  const footer = document.getElementById("footer");
 
-const setErrorMessageFor = ({ type, items }: { type: string; items: string }) => {
-  if (type === 'frames') {
-    return `Please check these items: <strong>${items}</strong>. Probably they are empty or contain non-vector elements.`
-  }
+  // TS narrowing for making sure that necessary UI is complete.
+  if (
+    !(
+      inner &&
+      iconsCounter &&
+      code &&
+      codeContainer &&
+      frames &&
+      framesText &&
+      errors &&
+      generateButton &&
+      generateButtonText &&
+      cancelButton &&
+      loader &&
+      footer
+    )
+  )
+    return;
 
-  if (type === 'icons') {
-    return `Oops... Something went wrong with: <strong>${items}</strong>.
+  new Clipboard("#copy-button", {
+    text: (trigger) => {
+      const defaultText = trigger.innerHTML;
+
+      trigger.innerHTML = "Copied";
+
+      setTimeout(() => {
+        trigger.innerHTML = defaultText;
+      }, 2000);
+
+      return code.innerText;
+    },
+  });
+
+  parent.postMessage({ pluginMessage: { type: "init" } }, "*");
+
+  const setErrorMessageFor = ({ type, items }: { type: string; items: string }) => {
+    if (type === "frames") {
+      return `Please check these items: <strong>${items}</strong>. Probably they are empty or contain non-vector elements.`;
+    }
+
+    if (type === "icons") {
+      return `Oops... Something went wrong with: <strong>${items}</strong>.
     <br><br>
     Please make sure that:
     a) item has only one child inside;
     b) the child is flattened;
     c) the child is a vector type (no groups, wrappers etc.);
     <br><br>
-    <small>Tip! Hide item to skip it.</small>`
-  }
+    <small>Tip! Hide item to skip it.</small>`;
+    }
 
-  if (type === 'names') {
-    return `Duplicated item names: <strong>${items}</strong>.`
-  }
-}
+    if (type === "names") {
+      return `Duplicated item names: <strong>${items}</strong>.`;
+    }
+  };
 
-const setErrorStateFor = ({ type, items }: { type: string; items: string[] }) => {
-  const sortedFrames = items.sort((a, b) => a.localeCompare(b)).join(', ')
+  const setErrorStateFor = ({ type, items }: { type: string; items: string[] }) => {
+    const sortedFrames = items.sort((a, b) => a.localeCompare(b)).join(", ");
 
-  errors.classList.remove('hidden')
-  errors.innerHTML = setErrorMessageFor({ type, items: sortedFrames })
-  generateButton.setAttribute('disabled', 'true')
-}
+    const errorMessage = setErrorMessageFor({ type, items: sortedFrames });
+    console.log(errorMessage);
+    if (!errorMessage) return;
 
-new Clipboard('#copy-button', {
-  text: trigger => {
-    const defaultText = trigger.innerHTML
+    errors.classList.remove("hidden");
+    errors.innerHTML = errorMessage;
+    generateButton.setAttribute("disabled", "true");
+  };
 
-    trigger.innerHTML = 'Copied'
+  onmessage = (event) => {
+    const { counter, icons, errorIcons, errorNames, errorFrames } = event.data.pluginMessage;
 
-    setTimeout(() => {
-      trigger.innerHTML = defaultText
-    }, 2000)
+    if (counter) {
+      iconsCounter.innerHTML = counter;
+    }
 
-    return this.text
-  },
-})
+    if (icons) {
+      code.innerHTML = icons;
+      codeContainer.classList.remove("hidden");
+      framesText.innerHTML = "Data has been generated from:";
+      frames.classList.add("success");
+      frames.title = Object.keys(JSON.parse(icons))
+        .sort((a, b) => a.localeCompare(b))
+        .join(", ");
+      generateButton.setAttribute("disabled", "true");
+    }
 
-parent.postMessage({ pluginMessage: { type: 'init' } }, '*')
+    if (errorFrames.length) {
+      setErrorStateFor({ type: "frames", items: errorFrames });
+    }
 
-onmessage = event => {
-  const { counter, icons, errorIcons, errorNames, errorFrames } = event.data.pluginMessage
+    if (errorIcons.length) {
+      setErrorStateFor({ type: "icons", items: errorIcons });
+    }
 
-  if (counter) {
-    iconsCounter.innerHTML = counter
-  }
+    if (errorNames.length) {
+      setErrorStateFor({ type: "names", items: errorNames });
+    }
+  };
 
-  if (icons) {
-    code.innerHTML = icons
-    codeContainer.classList.remove('hidden')
-    framesText.innerHTML = 'Data has been generated from:'
-    frames.classList.add('success')
-    frames.title = Object.keys(JSON.parse(icons))
-      .sort((a, b) => a.localeCompare(b))
-      .join(', ')
-    generateButton.setAttribute('disabled', 'true')
-  }
+  const codeObserver = new MutationObserver((mutationList) => {
+    for (const mutation of mutationList) {
+      if (mutation.type === "childList") {
+        loader.classList.add("hidden");
+        generateButtonText.classList.remove("hidden");
 
-  if (errorFrames) {
-    setErrorStateFor({ type: 'frames', items: errorFrames })
-  }
+        parent.postMessage(
+          {
+            pluginMessage: {
+              type: "resize",
+              size: {
+                height: inner.offsetHeight + footer.offsetHeight,
+              },
+            },
+          },
+          "*",
+        );
+      }
+    }
+  });
 
-  if (errorIcons) {
-    setErrorStateFor({ type: 'icons', items: errorIcons })
-  }
+  generateButton.onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "generate" } }, "*");
+    generateButtonText.classList.add("hidden");
+    loader.classList.remove("hidden");
 
-  if (errorNames) {
-    setErrorStateFor({ type: 'names', items: errorNames })
-  }
-}
+    codeObserver.observe(code, { childList: true });
+  };
 
-generateButton.onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'generate' } }, '*')
-  generateButtonText.classList.add('hidden')
-  loader.classList.remove('hidden')
-
-  setTimeout(() => {
-    loader.classList.add('hidden')
-    generateButtonText.classList.remove('hidden')
-    parent.postMessage({ pluginMessage: { innerHeight: inner.offsetHeight } }, '*')
-  }, 0)
-}
-
-cancelButton.onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+  cancelButton.onclick = () => {
+    codeObserver.disconnect();
+    parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+  };
+});

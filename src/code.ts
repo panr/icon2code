@@ -1,139 +1,157 @@
-import tinycolor2 from 'tinycolor2'
+import tinycolor2 from "tinycolor2";
+import { MessageCommand, MessageHandler } from "./commands";
 
 const initialModalSize = {
   width: 400,
   height: 250,
-}
+};
 
 const message: Message = {
   counter: null,
-  icons: null,
-  errorIcons: null,
-  errorNames: null,
-  errorFrames: null,
-}
+  icons: "",
+  errorIcons: [],
+  errorNames: [],
+  errorFrames: [],
+};
 
-const icons = {}
-const iconNamesWithError = []
-const iconsWithSameName = []
-const isProper = (item: ProperItemNode) =>
-  item.type === 'FRAME' || item.type === 'COMPONENT' || item.type === 'INSTANCE'
-const frames = figma.currentPage.children.filter(
-  (child: ProperItemNode) => isProper(child) && child.visible,
-)
+const icons: IconsData = {};
+
+const iconNamesWithError: string[] = [];
+const iconsWithSameName: string[] = [];
+
+function supportsVisibleChildren(
+  node: SceneNode,
+): node is FrameNode | ComponentNode | InstanceNode | BooleanOperationNode {
+  return (
+    (node.type === "FRAME" ||
+      node.type === "GROUP" ||
+      node.type === "COMPONENT" ||
+      node.type === "INSTANCE" ||
+      node.type === "BOOLEAN_OPERATION") &&
+    node.visible
+  );
+}
+const frames = figma.currentPage.children.filter(supportsVisibleChildren);
 const emptyFramesOrComponents = frames
-  .filter((frame: ProperItemNode) => isProper(frame) && !frame.children.length)
-  .map(frame => frame.name)
-const framesOrComponentsWithChildren = frames.filter(
-  (child: ProperItemNode) => isProper(child) && child.children.length,
-)
+  .filter((node) => !node.children.length)
+  .map((node) => node.name);
+const framesOrComponentsWithChildren = frames.filter((node) => node.children.length);
 
-figma.showUI(__html__, initialModalSize)
+figma.showUI(__html__, initialModalSize);
 
-figma.ui.onmessage = msg => {
-  const setProperHeight = () =>
-    figma.ui.resize(initialModalSize.width, msg.innerHeight + 65 || initialModalSize.height)
+const COMMANDS = {
+  ["init"]: new MessageCommand(() => {
+    message.counter = frames.length;
+    figma.ui.postMessage(message);
+  }),
+  ["cancel"]: new MessageCommand(() => {
+    figma.closePlugin();
+  }),
+  ["resize"]: new MessageCommand((msg: any) => {
+    console.log(msg);
+    const { width, height } = msg?.size;
+    figma.ui.resize(width || initialModalSize.width, height || initialModalSize.height);
+  }),
+  ["generate"]: new MessageCommand((msg: any) => {
+    if (!framesOrComponentsWithChildren.length) return;
 
-  if (msg.type === 'init') {
-    message.counter = frames.length.toString()
-    figma.ui.postMessage(message)
-  }
-
-  if (msg.type === 'generate') {
-    if (framesOrComponentsWithChildren) {
-      framesOrComponentsWithChildren.forEach(frame => {
-        // prevent TS errors
-        if (frame.type !== 'FRAME' && frame.type !== 'COMPONENT' && frame.type !== 'INSTANCE') {
-          return
-        }
-
-        const child = frame.children[0]
-
-        // Handle errors
-        if (frame.children.length > 1 || child.type !== 'VECTOR') {
-          iconNamesWithError.push(frame.name)
-        }
-
-        // prevent TS errors
-        if (child.type !== 'VECTOR') {
-          return
-        }
-
-        const name = frame.name
-        const paths = child.vectorPaths.map(path => ({
-          ...path,
-          windingRule: path.windingRule.toLowerCase(),
-        }))
-        const size = {
-          width: child.width,
-          height: child.height,
-        }
-        const viewBox = `0 0 ${frame.width} ${frame.height}`
-        const translate = {
-          x: child.x,
-          y: child.y,
-        }
-        const fills = child.fills[0]
-        let fill = null
-
-        if (fills) {
-          const { r, g, b } = fills.color
-          const { opacity } = fills
-          const rgb = tinycolor2.fromRatio({ r, g, b }).setAlpha(opacity)
-          fill = {
-            rgb: rgb.toRgbString(),
-            hsl: rgb.toHslString(),
-            hex: rgb.toHex8String(),
-          }
-        }
-
-        // Handle errors
-        if (icons[name]) {
-          iconsWithSameName.push(name)
-        }
-
-        icons[name] = {
-          name,
-          paths,
-          size,
-          fill,
-          viewBox,
-          translate,
-        }
-      })
+    framesOrComponentsWithChildren.forEach((frame) => {
+      const child = frame.children[0];
 
       // Handle errors
-      if (emptyFramesOrComponents.length) {
-        message.errorFrames = emptyFramesOrComponents
-        figma.ui.postMessage(message)
-
-        return
+      if (frame.children.length > 1 || child.type !== "VECTOR") {
+        iconNamesWithError.push(frame.name);
       }
+
+      // prevent TS errors
+      if (child.type !== "VECTOR") {
+        return;
+      }
+
+      const name = frame.name;
 
       // Handle errors
-      if (iconNamesWithError.length) {
-        message.errorIcons = iconNamesWithError
-        figma.ui.postMessage(message)
-
-        return
+      if (icons[name]) {
+        iconsWithSameName.push(name);
       }
 
-      // Handle errors
-      if (iconsWithSameName.length) {
-        message.errorNames = iconsWithSameName
-        figma.ui.postMessage(message)
+      const paths = child.vectorPaths.map((path) => ({
+        ...path,
+        windingRule: path.windingRule,
+      }));
 
-        return
+      const size = {
+        width: child.width,
+        height: child.height,
+      };
+
+      const viewBox = `0 0 ${frame.width} ${frame.height}`;
+
+      const translate = {
+        x: child.x,
+        y: child.y,
+      };
+
+      let fill = {
+        rgb: "rgb(0, 0, 0)",
+        hsl: "hsl(0, 0%, 0%)",
+        hex: "#000000",
+      };
+
+      if (child.fills !== figma.mixed && Array.isArray(child.fills) && child.fills[0]) {
+        const fills = child.fills[0];
+        const { r, g, b } = fills.color;
+        const { opacity } = fills;
+        const rgb = tinycolor2.fromRatio({ r, g, b }).setAlpha(opacity);
+
+        fill = {
+          rgb: rgb.toRgbString(),
+          hsl: rgb.toHslString(),
+          hex: rgb.toHex8String(),
+        };
       }
 
-      message.icons = JSON.stringify(icons, null, 2)
-      figma.ui.postMessage(message)
+      icons[name] = {
+        name,
+        paths,
+        size,
+        fill,
+        viewBox,
+        translate,
+      };
+    });
+
+    // Handle errors
+    if (emptyFramesOrComponents.length) {
+      message.errorFrames = emptyFramesOrComponents;
+      figma.ui.postMessage(message);
+
+      return;
     }
-  }
 
-  setProperHeight()
+    // Handle errors
+    if (iconNamesWithError.length) {
+      message.errorIcons = iconNamesWithError;
+      figma.ui.postMessage(message);
 
-  if (msg.type === 'cancel') {
-    figma.closePlugin()
-  }
-}
+      return;
+    }
+
+    // Handle errors
+    if (iconsWithSameName.length) {
+      message.errorNames = iconsWithSameName;
+      figma.ui.postMessage(message);
+
+      return;
+    }
+
+    message.icons = JSON.stringify(icons, null, 2);
+    figma.ui.postMessage(message);
+  }),
+};
+
+const messageHandler = new MessageHandler(COMMANDS);
+
+figma.ui.onmessage = (msg) => {
+  messageHandler.execute(msg);
+};
