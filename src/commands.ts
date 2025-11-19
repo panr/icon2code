@@ -1,6 +1,6 @@
 import tinycolor2 from "tinycolor2";
 import { initialModalSize } from "./variables";
-import { supportsVisibleChildren } from "./helpers";
+import { reducePrecision, supportsVisibleChildren } from "./helpers";
 
 const createMessage = (): Message => ({
   counter: 0,
@@ -69,8 +69,8 @@ export const generateCommand = new MessageCommand(() => {
     }
 
     const paths = child.vectorPaths.map((path) => ({
-      ...path,
-      windingRule: path.windingRule,
+      data: reducePrecision(path.data),
+      windingRule: path.windingRule.toLowerCase(),
     }));
 
     const size = {

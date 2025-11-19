@@ -10,3 +10,9 @@ export function supportsVisibleChildren(
     node.visible
   );
 }
+
+export function reducePrecision(pathData: string) {
+  return pathData.replace(/-?\d*\.?\d+/g, (match) => {
+    return parseFloat(match).toFixed(2).toString();
+  });
+}

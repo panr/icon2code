@@ -10,12 +10,17 @@ interface IconObject {
     height: number;
   };
   viewBox: string;
-  paths: VectorPaths;
+  paths: CustomVectorPaths[];
   translate: {
     x: number;
     y: number;
   };
 }
+
+type CustomVectorPaths = {
+  data: string;
+  windingRule: string;
+};
 
 type IconsData = {
   [name: string]: IconObject;
