@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortedFrames = items.sort((a, b) => a.localeCompare(b)).join(", ");
 
     const errorMessage = setErrorMessageFor({ type, items: sortedFrames });
-    console.log(errorMessage);
     if (!errorMessage) return;
 
     errors.classList.remove("hidden");
@@ -84,21 +83,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   onmessage = (event) => {
-    const { counter, icons, errorIcons, errorNames, errorFrames } = event.data.pluginMessage;
+    const { counter, icons, errorIcons, errorNames, errorFrames } = event.data
+      .pluginMessage as Message;
 
     if (counter) {
-      iconsCounter.innerHTML = counter;
-    }
-
-    if (icons) {
-      code.innerHTML = icons;
-      codeContainer.classList.remove("hidden");
-      framesText.innerHTML = "Data has been generated from:";
-      frames.classList.add("success");
-      frames.title = Object.keys(JSON.parse(icons))
-        .sort((a, b) => a.localeCompare(b))
-        .join(", ");
-      generateButton.setAttribute("disabled", "true");
+      iconsCounter.innerHTML = counter.toString();
     }
 
     if (errorFrames.length) {
@@ -112,39 +101,40 @@ document.addEventListener("DOMContentLoaded", () => {
     if (errorNames.length) {
       setErrorStateFor({ type: "names", items: errorNames });
     }
-  };
 
-  const codeObserver = new MutationObserver((mutationList) => {
-    for (const mutation of mutationList) {
-      if (mutation.type === "childList") {
-        loader.classList.add("hidden");
-        generateButtonText.classList.remove("hidden");
+    console.log(icons);
 
-        parent.postMessage(
-          {
-            pluginMessage: {
-              type: "resize",
-              size: {
-                height: inner.offsetHeight + footer.offsetHeight,
-              },
-            },
-          },
-          "*",
-        );
-      }
+    if (icons) {
+      code.innerHTML = JSON.stringify(icons, null, 2);
+      codeContainer.classList.remove("hidden");
+      framesText.innerHTML = "Data has been generated from:";
+      frames.classList.add("success");
+      generateButton.setAttribute("disabled", "true");
     }
-  });
+
+    loader.classList.add("hidden");
+    generateButtonText.classList.remove("hidden");
+
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "resize",
+          size: {
+            height: inner.offsetHeight + footer.offsetHeight,
+          },
+        },
+      },
+      "*",
+    );
+  };
 
   generateButton.onclick = () => {
     parent.postMessage({ pluginMessage: { type: "generate" } }, "*");
     generateButtonText.classList.add("hidden");
     loader.classList.remove("hidden");
-
-    codeObserver.observe(code, { childList: true });
   };
 
   cancelButton.onclick = () => {
-    codeObserver.disconnect();
     parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
   };
 });

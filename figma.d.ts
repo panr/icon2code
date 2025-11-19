@@ -22,8 +22,8 @@ type IconsData = {
 };
 
 interface Message {
-  counter: number | null;
-  icons: string;
+  counter: number;
+  icons: IconsData | null;
   errorIcons: string[];
   errorNames: string[];
   errorFrames: string[];
