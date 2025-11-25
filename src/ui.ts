@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   onmessage = (event) => {
     const { counter, icons, errorIcons, errorNames, errorFrames } = event.data
-      .pluginMessage as Message;
+      .pluginMessage as CommandMessage;
 
     if (counter) {
       iconsCounter.innerHTML = counter.toString();
@@ -102,8 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
       setErrorStateFor({ type: "names", items: errorNames });
     }
 
-    console.log(icons);
-
     if (icons) {
       code.innerHTML = JSON.stringify(icons, null, 2);
       codeContainer.classList.remove("hidden");
@@ -119,8 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
       {
         pluginMessage: {
           type: "resize",
-          size: {
-            height: inner.offsetHeight + footer.offsetHeight,
+          data: {
+            size: {
+              height: inner.offsetHeight + footer.offsetHeight,
+            },
           },
         },
       },

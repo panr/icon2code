@@ -26,10 +26,17 @@ type IconsData = {
   [name: string]: IconObject;
 };
 
-interface Message {
+interface CommandMessage {
   counter: number;
   icons: IconsData | null;
   errorIcons: string[];
   errorNames: string[];
   errorFrames: string[];
+}
+
+type CommandType = "init" | "cancel" | "resize" | "generate";
+
+interface PluginMessage {
+  type: CommandType;
+  data?: Record<string, any>;
 }

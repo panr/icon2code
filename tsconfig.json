@@ -7,6 +7,7 @@
     "strict": true,
     "typeRoots": [
       "@types",
+      "jest",
       "./node_modules/@types",
       "./node_modules/@figma"
     ],
@@ -14,6 +15,6 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
-  "include": ["src/**/*", "*.ts"],
+  "include": ["src/**/*", "*.ts", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
 }
