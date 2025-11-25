@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     errors.classList.remove("hidden");
     errors.innerHTML = errorMessage;
-    generateButton.setAttribute("disabled", "true");
+    // generateButton.setAttribute("disabled", "true");
   };
 
   onmessage = (event) => {
@@ -108,7 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
       codeContainer.classList.remove("hidden");
       framesText.innerHTML = "Data has been generated from:";
       frames.classList.add("success");
-      generateButton.setAttribute("disabled", "true");
+      generateButtonText.innerText = "Re-generate";
+      // generateButton.setAttribute("disabled", "true");
     }
 
     loader.classList.add("hidden");

@@ -1,8 +1,7 @@
-/* @import url('https://rsms.me/inter/inter.css'); */
-
 :root {
   --figmaBlue: #1DA4FC;
   --figmaBorder: #e5e5e5;
+  --borderRadius: 8px;
 }
 
 body {
@@ -17,11 +16,30 @@ body {
   flex-direction: column;
   flex: 1;
   height: 100%;
+  overflow: hidden;
 }
 
 .inner {
   flex: 1;
   padding: 15px 15px 0;
+}
+
+.options {
+  font-size: 13px;
+  background: var(--figmaBorder);
+  margin: 8px 0 0;
+  padding: 4px;
+  border-radius: var(--borderRadius);
+}
+
+.options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+input[type=checkbox] {
+  accent-color: black;
 }
 
 footer {
@@ -37,7 +55,7 @@ button {
   background: white;
   border: 1px solid var(--figmaBorder);
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: var(--borderRadius);
   font-weight: 500;
   outline: none;
 }
