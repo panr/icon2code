@@ -1,18 +1,19 @@
-import { CommandHandler, MessageCommand } from "../src/commands";
+import { CommandHandler, MessageCommand, commands } from "../src/commands";
+import { generateMessage, generateMessageWithReducedPrecision } from "./mocks/output";
 
 const initCommandMock = jest.fn();
 const resizeCommandMock = jest.fn();
 const cancelCommandMock = jest.fn();
 const generateCommandMock = jest.fn();
 
-const commands = {
+const mockCommands = {
   init: new MessageCommand(initCommandMock),
   resize: new MessageCommand(resizeCommandMock),
   cancel: new MessageCommand(cancelCommandMock),
   generate: new MessageCommand(generateCommandMock),
 };
 
-const commandHandler = new CommandHandler(commands);
+const commandHandler = new CommandHandler(mockCommands);
 
 describe("Commands Test Suite", () => {
   it("should have 4 required commands", () => {
@@ -49,5 +50,21 @@ describe("Commands Test Suite", () => {
   it("should call generate command", () => {
     commandHandler.execute({ type: "generate" });
     expect(generateCommandMock).toHaveBeenCalled();
+  });
+
+  it("should call the real generate command WITHOUT path data precision", () => {
+    const postMessageMock = figma.ui.postMessage as jest.Mock;
+    const commandHandler = new CommandHandler(commands);
+
+    commandHandler.execute({ type: "generate", data: { reducePrecision: false } });
+    expect(postMessageMock.mock.lastCall[0]).toEqual(generateMessage);
+  });
+
+  it("should call the real generate command WITH path data precision", () => {
+    const postMessageMock = figma.ui.postMessage as jest.Mock;
+    const commandHandler = new CommandHandler(commands);
+
+    commandHandler.execute({ type: "generate", data: { reducePrecision: true } });
+    expect(postMessageMock.mock.lastCall[0]).toEqual(generateMessageWithReducedPrecision);
   });
 });

@@ -4,6 +4,7 @@ import Clipboard from "clipboard";
 document.addEventListener("DOMContentLoaded", () => {
   const inner = document.getElementById("inner");
   const iconsCounter = document.getElementById("icons-counter");
+  const reducePrecisionCheckbox = document.getElementById("reducePrecision") as HTMLInputElement;
   const code = document.getElementById("code");
   const codeContainer = document.getElementById("code-container");
   const frames = document.getElementById("frames");
@@ -129,7 +130,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   generateButton.onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "generate" } }, "*");
+    const isReducePrecision = reducePrecisionCheckbox?.checked;
+    parent.postMessage(
+      { pluginMessage: { type: "generate", data: { reducePrecision: isReducePrecision } } },
+      "*",
+    );
     generateButtonText.classList.add("hidden");
     loader.classList.remove("hidden");
   };

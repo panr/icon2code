@@ -26,11 +26,11 @@ export const commands: Commands = {
   cancel: new MessageCommand(() => {
     figma.closePlugin();
   }),
-  resize: new MessageCommand((msg: PluginMessage) => {
+  resize: new MessageCommand((msg) => {
     const { width, height } = msg.data?.size;
     figma.ui.resize(width || initialModalSize.width, height || initialModalSize.height);
   }),
-  generate: new MessageCommand(() => {
+  generate: new MessageCommand((msg) => {
     const icons: IconsData = {};
     const message = createMessage();
 
@@ -40,6 +40,8 @@ export const commands: Commands = {
     const frames = figma.currentPage.children.filter(supportsVisibleChildren);
     const framesOrComponentsWithChildren = frames.filter((node) => node.children.length);
     if (!framesOrComponentsWithChildren.length) return;
+
+    message.counter = frames.length;
 
     framesOrComponentsWithChildren.forEach((frame) => {
       const child = frame.children[0];
@@ -56,7 +58,7 @@ export const commands: Commands = {
       }
 
       const paths = child.vectorPaths.map((path) => ({
-        data: reducePrecision(path.data),
+        data: msg?.data?.reducePrecision ? reducePrecision(path.data) : path.data,
         windingRule: path.windingRule.toLowerCase(),
       }));
 
@@ -87,7 +89,7 @@ export const commands: Commands = {
         fill = {
           rgb: rgb.toRgbString(),
           hsl: rgb.toHslString(),
-          hex: rgb.toHex8String(),
+          hex: rgb.toHexString(),
         };
       }
 
