@@ -1,4 +1,4 @@
-import "./style.css";
+import "@src/style.css";
 import Clipboard from "clipboard";
 
 document.addEventListener("DOMContentLoaded", () => {

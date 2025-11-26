@@ -1,3 +1,11 @@
+export const createMessage = (): CommandMessage => ({
+  counter: 0,
+  icons: null,
+  errorIcons: [],
+  errorNames: [],
+  errorFrames: [],
+});
+
 export function supportsVisibleChildren(
   node: SceneNode,
 ): node is FrameNode | ComponentNode | InstanceNode | BooleanOperationNode {
