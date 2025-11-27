@@ -40,3 +40,5 @@ interface PluginMessage {
   type: CommandType;
   data?: Record<string, any>;
 }
+
+type Frame = FrameNode | ComponentNode | InstanceNode | BooleanOperationNode;

@@ -1,7 +1,13 @@
 import { MessageCommand } from "@src/message-command";
 import { MessageCommandHandler } from "@src/message-command-handler";
-import { generateCommand } from "@src/commands";
+import { initCommand, resizeCommand, cancelCommand, generateCommand } from "@src/commands";
+import { createIcons } from "@src/commands/generate";
+import { supportsVisibleChildren } from "@src/helpers";
+
 import { generateMessage, generateMessageWithReducedPrecision } from "@tests/mocks/output";
+import iconsWithNoErrors from "@tests/mocks/icons/input/with-no-errors";
+import iconsWithSameNameErrors from "@tests/mocks/icons/input/with-same-name-errors";
+import iconsWithFrameDataErrors from "@tests/mocks/icons/input/with-frame-data-errors";
 
 const initCommandMock = jest.fn();
 const resizeCommandMock = jest.fn();
@@ -19,7 +25,7 @@ const commands = {
 
 const commandHandler = new MessageCommandHandler(commands);
 
-describe("Commands Test Suite", () => {
+describe("Commands", () => {
   beforeEach(() => {
     initCommandMock.mockClear();
     cancelCommandMock.mockClear();
@@ -28,35 +34,37 @@ describe("Commands Test Suite", () => {
     postMessageMock.mockClear();
   });
 
-  it("should call init command", () => {
-    commandHandler.execute({ type: "init" });
-    expect(initCommandMock).toHaveBeenCalled();
-  });
-
-  it("should call resize command", () => {
-    commandHandler.execute({ type: "resize" });
-    expect(resizeCommandMock).toHaveBeenCalled();
-  });
-
-  it("should call resize command with size object", () => {
-    commandHandler.execute({
-      type: "resize",
-      data: { size: { width: 100, height: 100 } },
+  describe("new CommandHandler()", () => {
+    it("should call init command", () => {
+      commandHandler.execute({ type: "init" });
+      expect(initCommandMock).toHaveBeenCalled();
     });
-    expect(resizeCommandMock).toHaveBeenCalledWith({
-      type: "resize",
-      data: { size: { width: 100, height: 100 } },
+
+    it("should call resize command", () => {
+      commandHandler.execute({ type: "resize" });
+      expect(resizeCommandMock).toHaveBeenCalled();
     });
-  });
 
-  it("should call cancel command", () => {
-    commandHandler.execute({ type: "cancel" });
-    expect(cancelCommandMock).toHaveBeenCalled();
-  });
+    it("should call resize command with size object", () => {
+      commandHandler.execute({
+        type: "resize",
+        data: { size: { width: 100, height: 100 } },
+      });
+      expect(resizeCommandMock).toHaveBeenCalledWith({
+        type: "resize",
+        data: { size: { width: 100, height: 100 } },
+      });
+    });
 
-  it("should call generate command", () => {
-    commandHandler.execute({ type: "generate" });
-    expect(generateCommandMock).toHaveBeenCalled();
+    it("should call cancel command", () => {
+      commandHandler.execute({ type: "cancel" });
+      expect(cancelCommandMock).toHaveBeenCalled();
+    });
+
+    it("should call generate command", () => {
+      commandHandler.execute({ type: "generate" });
+      expect(generateCommandMock).toHaveBeenCalled();
+    });
   });
 
   it("should call the real generate command WITHOUT path data precision", () => {
@@ -71,5 +79,74 @@ describe("Commands Test Suite", () => {
 
     commandHandler.execute({ type: "generate", data: { reducePrecision: true } });
     expect(postMessageMock.mock.lastCall[0]).toEqual(generateMessageWithReducedPrecision);
+  });
+
+  describe("should call a command with the correct format of message to Figma Plugin", () => {
+    const commands = {
+      init: initCommand,
+      cancel: cancelCommand,
+      resize: resizeCommand,
+      generate: generateCommand,
+    };
+
+    const commandHandler = new MessageCommandHandler(commands);
+    const types = Object.keys(commands) as CommandType[];
+
+    const messageLessCommands = ["resize", "cancel"];
+
+    for (const type of types) {
+      test(`command of type "${type}"`, () => {
+        commandHandler.execute({ type });
+        const message = postMessageMock.mock.lastCall?.[0];
+        if (!message && messageLessCommands.includes(type)) {
+          postMessageMock.mockClear();
+          return;
+        }
+
+        expect(message).toHaveProperty("counter");
+        expect(typeof message.counter === "number").toBeTruthy();
+        expect(message).toHaveProperty("icons");
+        expect(typeof message.icons === "object").toBeTruthy();
+        expect(message).toHaveProperty("errorNames");
+        expect(Array.isArray(message.errorNames)).toBeTruthy();
+        expect(message).toHaveProperty("errorIcons");
+        expect(Array.isArray(message.errorIcons)).toBeTruthy();
+        expect(message).toHaveProperty("errorFrames");
+        expect(Array.isArray(message.errorFrames)).toBeTruthy();
+        postMessageMock.mockClear();
+      });
+    }
+  });
+
+  describe("createIcons() handler", () => {
+    it("should return no errors and 2 icons", () => {
+      const frames = (iconsWithNoErrors as SceneNode[]).filter(supportsVisibleChildren);
+      const { icons, iconsWithSameName, iconsWithError } = createIcons(frames);
+
+      expect(Object.keys(icons).length).toEqual(2);
+      expect(icons["open-eye"]).toBeDefined();
+      expect(icons["closed-eye"]).toBeDefined();
+      expect(iconsWithError.size).toEqual(0);
+      expect(iconsWithSameName.size).toEqual(0);
+    });
+
+    it("should return errors about same names", () => {
+      const frames = (iconsWithSameNameErrors as SceneNode[]).filter(supportsVisibleChildren);
+      const { icons, iconsWithSameName } = createIcons(frames);
+
+      expect(Object.keys(icons).length).toEqual(1);
+      expect(iconsWithSameName.size).toEqual(1);
+      expect(iconsWithSameName.has("open-eye")).toBeTruthy();
+    });
+
+    it("should return errors about frame data issue", () => {
+      const frames = (iconsWithFrameDataErrors as SceneNode[]).filter(supportsVisibleChildren);
+      const { icons, iconsWithError } = createIcons(frames);
+
+      expect(Object.keys(icons).length).toEqual(0);
+      expect(iconsWithError.size).toEqual(2);
+      expect(iconsWithError.has("open-eye")).toBeTruthy();
+      expect(iconsWithError.has("closed-eye")).toBeTruthy();
+    });
   });
 });

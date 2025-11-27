@@ -15,7 +15,6 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 100%;
   overflow: hidden;
 }
 
@@ -109,7 +108,7 @@ pre:not(:empty) {
   right: 10px;
 }
 
-#error:not(:empty) {
+#error:not(:empty):not(.hidden) {
   background: #ffd5d5;
   color: #8a4040;
   font-size: 13px;
@@ -125,16 +124,18 @@ pre:not(:empty) {
   cursor: help;
 }
 
+#frames {
+  display: table;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 5px auto 0;
+  font-size: 13px;
+}
+
 .success {
   background: #d4fdd9;
   color: #3d8a55;
-  font-size: 13px;
-  display: table;
-  margin: 10px auto 0;
-  padding: 5px 10px;
-  border-radius: 5px;
-  text-align: center;
-  cursor: help;
 }
 
 .loader,

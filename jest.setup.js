@@ -27,6 +27,7 @@ global.figma = {
   ui: {
     postMessage: jest.fn(),
     onmessage: null,
+    resize: jest.fn(),
   },
 
   // Other common methods

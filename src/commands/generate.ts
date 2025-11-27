@@ -2,35 +2,74 @@ import { MessageCommand } from "@src/message-command";
 import { supportsVisibleChildren, reducePrecision, createMessage } from "@src/helpers";
 import tinycolor2 from "tinycolor2";
 
+type CreateIconsOptions = {
+  reducePrecision: boolean;
+};
+
 export const generateCommand = new MessageCommand((msg) => {
-  const icons: IconsData = {};
   const message = createMessage();
 
-  const iconsWithError: Set<string> = new Set();
-  const iconsWithSameName: Set<string> = new Set();
-
   const frames = figma.currentPage.children.filter(supportsVisibleChildren);
-  const framesOrComponentsWithChildren = frames.filter((node) => node.children.length);
-  if (!framesOrComponentsWithChildren.length) return;
+  const framesWithChildren = frames.filter((node) => node.children.length);
+  if (!framesWithChildren.length) return;
 
   message.counter = frames.length;
 
-  framesOrComponentsWithChildren.forEach((frame) => {
+  // Handle empty frames errors.
+  const emptyFramesOrComponents = frames
+    .filter((node) => !node.children.length)
+    .map((node) => node.name);
+  if (emptyFramesOrComponents.length) {
+    message.errorFrames = emptyFramesOrComponents;
+    figma.ui.postMessage(message);
+    return;
+  }
+
+  const options = {
+    reducePrecision: msg?.data?.reducePrecision,
+  };
+  const { icons, iconsWithError, iconsWithSameName } = createIcons(framesWithChildren, options);
+
+  if (!Object.keys(icons).length) return;
+
+  // Handle icon data errors.
+  if (iconsWithError.size) {
+    message.errorIcons = [...iconsWithError];
+    figma.ui.postMessage(message);
+    return;
+  }
+
+  // Handle duplicate icon names errors.
+  if (iconsWithSameName.size) {
+    message.errorNames = [...iconsWithSameName];
+    figma.ui.postMessage(message);
+    return;
+  }
+
+  message.icons = icons;
+  figma.ui.postMessage(message);
+});
+
+export function createIcons(frames: Frame[], options?: CreateIconsOptions) {
+  const icons: IconsData = {};
+  const iconsWithError: Set<string> = new Set();
+  const iconsWithSameName: Set<string> = new Set();
+
+  frames.forEach((frame) => {
     const child = frame.children[0];
     const name = frame.name;
 
     if (frame.children.length > 1 || child.type !== "VECTOR") {
       iconsWithError.add(name);
+      return;
     }
-
-    if (child.type !== "VECTOR") return;
 
     if (icons[name]) {
       iconsWithSameName.add(name);
     }
 
     const paths = child.vectorPaths.map((path) => ({
-      data: msg?.data?.reducePrecision ? reducePrecision(path.data) : path.data,
+      data: options?.reducePrecision ? reducePrecision(path.data) : path.data,
       windingRule: path.windingRule.toLowerCase(),
     }));
 
@@ -75,32 +114,9 @@ export const generateCommand = new MessageCommand((msg) => {
     };
   });
 
-  if (!Object.keys(icons).length) return;
-
-  // Handle errors
-  const emptyFramesOrComponents = frames
-    .filter((node) => !node.children.length)
-    .map((node) => node.name);
-  if (emptyFramesOrComponents.length) {
-    message.errorFrames = emptyFramesOrComponents;
-    figma.ui.postMessage(message);
-    return;
-  }
-
-  // Handle errors
-  if (iconsWithError.size) {
-    message.errorIcons = [...iconsWithError];
-    figma.ui.postMessage(message);
-    return;
-  }
-
-  // Handle errors
-  if (iconsWithSameName.size) {
-    message.errorNames = [...iconsWithSameName];
-    figma.ui.postMessage(message);
-    return;
-  }
-
-  message.icons = icons;
-  figma.ui.postMessage(message);
-});
+  return {
+    icons,
+    iconsWithError,
+    iconsWithSameName,
+  };
+}

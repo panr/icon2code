@@ -80,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     errors.classList.remove("hidden");
     errors.innerHTML = errorMessage;
-    // generateButton.setAttribute("disabled", "true");
   };
 
   onmessage = (event) => {
@@ -88,46 +87,32 @@ document.addEventListener("DOMContentLoaded", () => {
       .pluginMessage as CommandMessage;
 
     if (counter) {
-      iconsCounter.innerHTML = counter.toString();
+      setCounter(counter);
     }
 
     if (errorFrames.length) {
-      setErrorStateFor({ type: "frames", items: errorFrames });
+      showError({ type: "frames", items: errorFrames });
+      resize(reset);
+      return;
     }
 
     if (errorIcons.length) {
-      setErrorStateFor({ type: "icons", items: errorIcons });
+      showError({ type: "icons", items: errorIcons });
+      resize(reset);
+      return;
     }
 
     if (errorNames.length) {
-      setErrorStateFor({ type: "names", items: errorNames });
+      showError({ type: "names", items: errorNames });
+      resize(reset);
+      return;
     }
 
     if (icons) {
-      code.innerHTML = JSON.stringify(icons, null, 2);
-      codeContainer.classList.remove("hidden");
-      framesText.innerHTML = "Data has been generated from:";
-      frames.classList.add("success");
-      generateButtonText.innerText = "Re-generate";
-      // generateButton.setAttribute("disabled", "true");
+      showIconData(icons);
     }
 
-    loader.classList.add("hidden");
-    generateButtonText.classList.remove("hidden");
-
-    parent.postMessage(
-      {
-        pluginMessage: {
-          type: "resize",
-          data: {
-            size: {
-              height: inner.offsetHeight + footer.offsetHeight,
-            },
-          },
-        },
-      },
-      "*",
-    );
+    resize(reset);
   };
 
   generateButton.onclick = () => {
@@ -142,5 +127,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cancelButton.onclick = () => {
     parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+  };
+
+  const resize = (cb?: () => void) => {
+    console.log(inner.offsetHeight + footer.offsetHeight);
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "resize",
+          data: {
+            size: {
+              height: inner.offsetHeight + footer.offsetHeight,
+            },
+          },
+        },
+      },
+      "*",
+    );
+
+    cb && cb();
+  };
+
+  const setCounter = (counter: number) => {
+    iconsCounter.innerHTML = counter.toString();
+  };
+
+  const showError = ({ type, items }: { type: string; items: string[] }) => {
+    hideIconData();
+    framesText.innerHTML = "Generate data from:";
+    frames.classList.remove("success");
+    setErrorStateFor({ type, items });
+  };
+
+  const hideError = () => {
+    errors.classList.add("hidden");
+  };
+
+  const showIconData = (icons: IconsData) => {
+    hideError();
+    code.innerText = JSON.stringify(icons, null, 2);
+    codeContainer.classList.remove("hidden");
+    framesText.innerHTML = "Data has been generated from:";
+    frames.classList.add("success");
+    generateButtonText.innerText = "Re-generate";
+  };
+
+  const hideIconData = () => {
+    code.innerText = JSON.stringify("", null, 2);
+    codeContainer.classList.add("hidden");
+    frames.classList.remove("success");
+    generateButtonText.innerText = "Generate";
+  };
+
+  const reset = () => {
+    loader.classList.add("hidden");
+    generateButtonText.classList.remove("hidden");
   };
 });
