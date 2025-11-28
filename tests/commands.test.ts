@@ -105,14 +105,19 @@ describe("Commands", () => {
 
         expect(message).toHaveProperty("counter");
         expect(typeof message.counter === "number").toBeTruthy();
+
         expect(message).toHaveProperty("icons");
         expect(typeof message.icons === "object").toBeTruthy();
+
         expect(message).toHaveProperty("errorNames");
         expect(Array.isArray(message.errorNames)).toBeTruthy();
+
         expect(message).toHaveProperty("errorIcons");
         expect(Array.isArray(message.errorIcons)).toBeTruthy();
+
         expect(message).toHaveProperty("errorFrames");
         expect(Array.isArray(message.errorFrames)).toBeTruthy();
+
         postMessageMock.mockClear();
       });
     }
@@ -127,6 +132,7 @@ describe("Commands", () => {
       expect(icons["open-eye"]).toBeDefined();
       expect(icons["success"]).toBeDefined();
       expect(icons["star"]).toBeDefined();
+
       expect(iconsWithError.size).toEqual(0);
       expect(iconsWithSameName.size).toEqual(0);
     });
@@ -148,6 +154,69 @@ describe("Commands", () => {
       expect(iconsWithError.size).toEqual(2);
       expect(iconsWithError.has("open-eye")).toBeTruthy();
       expect(iconsWithError.has("success")).toBeTruthy();
+    });
+  });
+
+  describe("Icon data", () => {
+    const frames = (iconsWithNoErrors as SceneNode[]).filter(supportsVisibleChildren);
+    const { icons } = createIcons(frames);
+
+    it("should have name property", () => {
+      for (const name of Object.keys(icons)) {
+        const icon = icons[name];
+
+        expect(icon.name).toBeDefined();
+      }
+    });
+
+    it("should have paths property", () => {
+      for (const name of Object.keys(icons)) {
+        const icon = icons[name];
+
+        expect(icon.paths).toBeDefined();
+
+        for (const path of icon.paths) {
+          expect(path.data).toBeDefined();
+          expect(path.windingRule).toBeDefined();
+          expect(path.windingRule).toMatch(/nonzero|evenodd/);
+        }
+      }
+    });
+
+    it("should have size (width, height) property", () => {
+      for (const name of Object.keys(icons)) {
+        const icon = icons[name];
+
+        expect(icon.size.width).toBeDefined();
+        expect(icon.size.height).toBeDefined();
+      }
+    });
+
+    it("should have viewBox property", () => {
+      for (const name of Object.keys(icons)) {
+        const icon = icons[name];
+
+        expect(icon.viewBox).toBeDefined();
+      }
+    });
+
+    it("should have fill (rgb, hsl, hex) property", () => {
+      for (const name of Object.keys(icons)) {
+        const icon = icons[name];
+
+        expect(icon.fill.rgb).toBeDefined();
+        expect(icon.fill.hsl).toBeDefined();
+        expect(icon.fill.hex).toBeDefined();
+      }
+    });
+
+    it("should have translate (x, y) property", () => {
+      for (const name of Object.keys(icons)) {
+        const icon = icons[name];
+
+        expect(icon.translate.x).toBeDefined();
+        expect(icon.translate.y).toBeDefined();
+      }
     });
   });
 });
