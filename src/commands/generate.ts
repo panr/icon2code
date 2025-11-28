@@ -9,7 +9,7 @@ type CreateIconsOptions = {
 export const generateCommand = new MessageCommand((msg) => {
   const message = createMessage();
 
-  const frames = figma.currentPage.children.filter(supportsVisibleChildren);
+  const frames = figma?.currentPage.children.filter(supportsVisibleChildren);
   const framesWithChildren = frames.filter((node) => node.children.length);
   if (!framesWithChildren.length) return;
 
@@ -91,7 +91,8 @@ export function createIcons(frames: Frame[], options?: CreateIconsOptions) {
       hex: "#000000",
     };
 
-    if (child.fills !== figma.mixed && Array.isArray(child.fills) && child.fills[0]) {
+    if (Array.isArray(child.fills) && child.fills[0]) {
+      // if (child.fills !== figma?.mixed && Array.isArray(child.fills) && child.fills[0]) {
       const fills = child.fills[0];
       const { r, g, b } = fills.color;
       const { opacity } = fills;

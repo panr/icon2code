@@ -125,7 +125,7 @@ describe("Commands", () => {
 
       expect(Object.keys(icons).length).toEqual(2);
       expect(icons["open-eye"]).toBeDefined();
-      expect(icons["closed-eye"]).toBeDefined();
+      expect(icons["success"]).toBeDefined();
       expect(iconsWithError.size).toEqual(0);
       expect(iconsWithSameName.size).toEqual(0);
     });
@@ -146,7 +146,7 @@ describe("Commands", () => {
       expect(Object.keys(icons).length).toEqual(0);
       expect(iconsWithError.size).toEqual(2);
       expect(iconsWithError.has("open-eye")).toBeTruthy();
-      expect(iconsWithError.has("closed-eye")).toBeTruthy();
+      expect(iconsWithError.has("success")).toBeTruthy();
     });
   });
 });

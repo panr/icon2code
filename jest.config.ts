@@ -6,6 +6,7 @@ const jestConfig: Config = {
   roots: ["<rootDir>/tests"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   testMatch: ["**/?(*.)+(spec|test).ts"],
+  testPathIgnorePatterns: ["/node_modules/", ".visual.test.ts"],
   transform: {
     "^.+\\.ts$": "ts-jest",
   },

@@ -45,7 +45,7 @@ export default [
   },
   {
     id: "2:26",
-    name: "closed-eye",
+    name: "success",
     visible: true,
     type: "FRAME",
     width: 40,
