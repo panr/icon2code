@@ -1,5 +1,5 @@
-import iconsWithHighPrecision from "./icons/output/with-high-precision";
-import iconsWithReducedPrecision from "./icons/output/with-reduced-precision";
+import iconsWithHighPrecision from "./plugin-data/icons-with-default-precision";
+import iconsWithReducedPrecision from "./plugin-data/icons-with-reduced-precision";
 
 export const generateMessage = {
   counter: 3,

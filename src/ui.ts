@@ -130,7 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const resize = (cb?: () => void) => {
-    console.log(inner.offsetHeight + footer.offsetHeight);
     parent.postMessage(
       {
         pluginMessage: {

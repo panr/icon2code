@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import { test, expect, type Page } from "@playwright/test";
 import { createIcons } from "@src/commands/generate";
 import { supportsVisibleChildren } from "@src/helpers";
-import iconsWithNoErrors from "@tests/mocks/icons/input/with-no-errors";
+import iconsWithNoErrors from "@tests/mocks/figma-data/icons-with-no-errors";
 
 const frames = (iconsWithNoErrors as SceneNode[]).filter(supportsVisibleChildren);
 const { icons } = createIcons(frames);

@@ -4,10 +4,10 @@ import { initCommand, resizeCommand, cancelCommand, generateCommand } from "@src
 import { createIcons } from "@src/commands/generate";
 import { supportsVisibleChildren } from "@src/helpers";
 
-import { generateMessage, generateMessageWithReducedPrecision } from "@tests/mocks/output";
-import iconsWithNoErrors from "@tests/mocks/icons/input/with-no-errors";
-import iconsWithSameNameErrors from "@tests/mocks/icons/input/with-same-name-errors";
-import iconsWithFrameDataErrors from "@tests/mocks/icons/input/with-frame-data-errors";
+import { generateMessage, generateMessageWithReducedPrecision } from "@tests/mocks/plugin-message";
+import iconsWithNoErrors from "@tests/mocks/figma-data/icons-with-no-errors";
+import iconsWithSameNameErrors from "@tests/mocks/figma-data/icons-with-same-name-errors";
+import iconsWithFrameDataErrors from "@tests/mocks/figma-data/icons-with-frame-data-errors";
 
 const initCommandMock = jest.fn();
 const resizeCommandMock = jest.fn();
@@ -123,9 +123,10 @@ describe("Commands", () => {
       const frames = (iconsWithNoErrors as SceneNode[]).filter(supportsVisibleChildren);
       const { icons, iconsWithSameName, iconsWithError } = createIcons(frames);
 
-      expect(Object.keys(icons).length).toEqual(2);
+      expect(Object.keys(icons).length).toEqual(3);
       expect(icons["open-eye"]).toBeDefined();
       expect(icons["success"]).toBeDefined();
+      expect(icons["star"]).toBeDefined();
       expect(iconsWithError.size).toEqual(0);
       expect(iconsWithSameName.size).toEqual(0);
     });

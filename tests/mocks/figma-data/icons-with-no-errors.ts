@@ -87,4 +87,44 @@ export default [
       },
     ],
   },
+  {
+    id: "133:3",
+    name: "star",
+    visible: true,
+    type: "FRAME",
+    width: 40,
+    height: 40,
+    children: [
+      {
+        id: "149:4",
+        name: "Vector",
+        type: "VECTOR",
+        visible: true,
+        fills: [
+          {
+            type: "SOLID",
+            visible: true,
+            opacity: 1,
+            blendMode: "NORMAL",
+            color: {
+              r: 0,
+              g: 0,
+              b: 0,
+            },
+            boundVariables: {},
+          },
+        ],
+        width: 26,
+        height: 26,
+        x: 7,
+        y: 7,
+        vectorPaths: [
+          {
+            windingRule: "NONZERO",
+            data: "M 12.999998997247522 0 L 16.06888284734806 9.931116297463477 L 26 9.931116297463477 L 17.965558074949733 16.068884756892977 L 21.03444192505027 26 L 12.999998997247522 19.862234703639864 L 4.965557573573492 26 L 8.03444092229779 16.068884756892977 L 0 9.931116297463477 L 9.931115147146985 9.931116297463477 L 12.999998997247522 0 Z",
+          },
+        ],
+      },
+    ],
+  },
 ] as unknown;
