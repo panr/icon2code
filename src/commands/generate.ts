@@ -30,8 +30,6 @@ export const generateCommand = new MessageCommand((msg) => {
   };
   const { icons, iconsWithError, iconsWithSameName } = createIcons(framesWithChildren, options);
 
-  if (!Object.keys(icons).length) return;
-
   // Handle icon data errors.
   if (iconsWithError.size) {
     message.errorIcons = [...iconsWithError];
@@ -45,6 +43,8 @@ export const generateCommand = new MessageCommand((msg) => {
     figma.ui.postMessage(message);
     return;
   }
+
+  if (!Object.keys(icons).length) return;
 
   message.icons = icons;
   figma.ui.postMessage(message);
