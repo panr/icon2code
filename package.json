@@ -1,8 +1,8 @@
 {
-  "name": "icons",
-  "version": "1.0.0",
-  "description": "Simple plugin to generate icons data from canvas",
-  "main": "code.js",
+  "name": "icon2code",
+  "version": "2.0.0",
+  "description": "A simple plugin for generating JSON data from icon set in Figma",
+  "main": "src/code.ts",
   "author": "Radosław Kozieł (@panr)",
   "license": "MIT",
   "scripts": {
