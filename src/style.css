@@ -1,13 +1,29 @@
-@import url('https://rsms.me/inter/inter.css');
-
 :root {
-  --figmaBlue: #1DA4FC;
-  --figmaBorder: #e5e5e5;
+  --figmaAccent: #1DA4FC;
+  --figmaSecondAccent: #F5F5F5;
+  --figmaColor: black;
+  --figmaBackground: white;
+  --figmaBorderColor: #e5e5e5;
+  --successColor: #d4fdd9;
+  --borderRadius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --figmaAccent: #0C8CE9;
+    --figmaSecondAccent: #383838;
+    --figmaColor: #EEEEEE;
+    --figmaBackground: #2C2C2C;
+    --figmaBorderColor: #444444;
+    --successColor: #2d5e33;
+    --borderRadius: 8px;
+  }
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background: white;
+  background: var(--figmaBackground);
+  color: var(--figmaColor);
   margin: 0;
   padding: 0;
 }
@@ -16,12 +32,30 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 100%;
+  overflow: hidden;
 }
 
 .inner {
   flex: 1;
   padding: 15px 15px 0;
+}
+
+.options {
+  font-size: 13px;
+  margin: 8px 0 0;
+  padding: 4px;
+  border: 1px solid var(--figmaBorderColor);
+  border-radius: var(--borderRadius);
+}
+
+.options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+input[type=checkbox] {
+  accent-color: black;
 }
 
 footer {
@@ -34,26 +68,28 @@ button {
   display: flex;
   justify-content: center;
   font-size: 12px;
-  background: white;
-  border: 1px solid var(--figmaBorder);
+  background: var(--figmaSecondAccent);
+  color: var(--figmaColor);
+  border: 1px solid var(--figmaBorderColor);
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: var(--borderRadius);
   font-weight: 500;
   outline: none;
 }
 
 button.primary {
-  background: var(--figmaBlue);
-  border-color: var(--figmaBlue);
+  background: var(--figmaAccent);
+  border-color: var(--figmaAccent);
   color: white;
   flex: 1;
   margin-right: 10px;
 }
 
 button:disabled {
-  background: #eaeaea;
-  border-color: #eaeaea;
-  color: #999;
+  background: var(--figmaSecondAccent);
+  border-color: var(--figmaSecondAccent);
+  color: color-mix(in srgb, var(--figmaColor), transparent 60%);
+  cursor: not-allowed;
 }
 
 .inner__info {
@@ -72,11 +108,12 @@ button:disabled {
 }
 
 pre:not(:empty) {
-  border: 1px solid var(--figmaBorder);
+  border: 1px solid var(--figmaBorderColor);
   padding: 10px;
   margin: 10px 0 0;
   font-size: 12px;
   max-height: 200px;
+  border-radius: var(--borderRadius) var(--borderRadius) 0 0;
   white-space: pre-wrap;
   overflow: auto;
 }
@@ -85,13 +122,19 @@ pre:not(:empty) {
   position: relative;
 }
 
-#copy-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+#code-container:not(.hidden) + #copy-button {
+  display: block;
 }
 
-#error:not(:empty) {
+#copy-button {
+  position: relative;
+  display: none;
+  width: 100%;
+  margin-top: -1px;
+  border-radius: 0 0 var(--borderRadius) var(--borderRadius);
+}
+
+#error:not(:empty):not(.hidden) {
   background: #ffd5d5;
   color: #8a4040;
   font-size: 13px;
@@ -107,16 +150,18 @@ pre:not(:empty) {
   cursor: help;
 }
 
-.success {
-  background: #d4fdd9;
-  color: #3d8a55;
-  font-size: 13px;
+#frames {
   display: table;
-  margin: 10px auto 0;
-  padding: 5px 10px;
-  border-radius: 5px;
   text-align: center;
-  cursor: help;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 5px auto 0;
+  font-size: 13px;
+}
+
+.success {
+  background: var(--successColor);
+  color: var(--figmaColor);
 }
 
 .loader,

@@ -1,15 +1,24 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "lib": ["es6", "dom"],
     "module": "commonjs",
-    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
     "typeRoots": [
       "@types",
-      "node_modules/@types"
+      "jest",
+      "./node_modules/@types",
+      "./node_modules/@figma"
     ],
     "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@src/*": ["src/*"],
+      "@tests/*": ["tests/*"]
+    },
   },
-  "types": [
-    "node"
-  ]
+  "include": ["src/**/*", "*.ts", "tests/**/*"],
+  "exclude": ["node_modules", "dist"],
 }

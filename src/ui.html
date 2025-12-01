@@ -1,19 +1,25 @@
 <div id="container" class="container">
   <div id="inner" class="inner">
-    <img src="<%= require('./logo.svg') %>" alt="logo" class="logo" />
+    <img src="./assets/logo.png" alt="logo" class="logo" />
     <div class="inner__info">
       <h4>Icon2Code</h4>
       <small id="frames"><span id="frames-text">Generate data from:</span>&nbsp;<strong><span id="icons-counter"></span> items</strong></small>
     </div>
+    <div class="options">
+      <label>
+        <input type="checkbox" id="reducePrecision" name="reducePrecision">
+        Reduce path data decimal precision (2 digits)
+      </label>
+    </div>
     <div id="code-container" class="hidden">
-      <button id="copy-button" data-clipboard-action="copy" data-clipboard-target="#code">
-        Copy to clipboard
-      </button>
       <pre id="code"></pre>
     </div>
+    <button id="copy-button" data-clipboard-action="copy" data-clipboard-target="#code">
+      Copy to clipboard
+    </button>
     <div id="error" class="hidden"></div>
   </div>
-  <footer>
+  <footer id="footer">
     <button id="generate" class="primary">
       <span id="generate-button-text">Generate</span>
       <span id="loader" class="hidden loader"></span>
