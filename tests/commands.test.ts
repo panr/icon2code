@@ -1,13 +1,15 @@
 import { MessageCommand } from "@src/message-command";
 import { MessageCommandHandler } from "@src/message-command-handler";
 import { initCommand, resizeCommand, cancelCommand, generateCommand } from "@src/commands";
-import { createIcons } from "@src/commands/generate";
+import { createIcons, validateFrames } from "@src/commands/generate";
 import { supportsVisibleChildren } from "@src/helpers";
 
 import { generateMessage, generateMessageWithReducedPrecision } from "@tests/mocks/plugin-message";
 import iconsWithNoErrors from "@tests/mocks/figma-data/icons-with-no-errors";
+import iconsWithNoErrorsWithHiddenInvalidFrames from "@tests/mocks/figma-data/icons-with-no-errors-with-empty-one-hidden-frame";
 import iconsWithSameNameErrors from "@tests/mocks/figma-data/icons-with-same-name-errors";
 import iconsWithFrameDataErrors from "@tests/mocks/figma-data/icons-with-frame-data-errors";
+import iconsWithEmptyFramesErrors from "@tests/mocks/figma-data/icons-with-empty-frames-errors";
 
 const initCommandMock = jest.fn();
 const resizeCommandMock = jest.fn();
@@ -124,8 +126,23 @@ describe("Commands", () => {
   });
 
   describe("createIcons() handler", () => {
-    it("should return no errors and 2 icons", () => {
+    it("should return icons without any errors", () => {
       const frames = (iconsWithNoErrors as SceneNode[]).filter(supportsVisibleChildren);
+      const { icons, iconsWithSameName, iconsWithError } = createIcons(frames);
+
+      expect(Object.keys(icons).length).toEqual(3);
+      expect(icons["open-eye"]).toBeDefined();
+      expect(icons["success"]).toBeDefined();
+      expect(icons["star"]).toBeDefined();
+
+      expect(iconsWithError.size).toEqual(0);
+      expect(iconsWithSameName.size).toEqual(0);
+    });
+
+    it("should return icons without any errors (skipping hidden frames)", () => {
+      const frames = (iconsWithNoErrorsWithHiddenInvalidFrames as SceneNode[]).filter(
+        supportsVisibleChildren,
+      );
       const { icons, iconsWithSameName, iconsWithError } = createIcons(frames);
 
       expect(Object.keys(icons).length).toEqual(3);
@@ -154,6 +171,33 @@ describe("Commands", () => {
       expect(iconsWithError.size).toEqual(2);
       expect(iconsWithError.has("open-eye")).toBeTruthy();
       expect(iconsWithError.has("success")).toBeTruthy();
+    });
+  });
+
+  describe("validateFrames() handler", () => {
+    it("should return no errors about empty frames", () => {
+      const frames = iconsWithNoErrors as SceneNode[];
+      const { areValid, invalidFrames } = validateFrames(frames);
+
+      expect(areValid).toBeTruthy();
+      expect(invalidFrames.size).toEqual(0);
+    });
+
+    it("should return no errors about empty frames (skipping hidden frames)", () => {
+      const frames = iconsWithNoErrorsWithHiddenInvalidFrames as SceneNode[];
+      const { areValid, invalidFrames } = validateFrames(frames);
+
+      expect(areValid).toBeTruthy();
+      expect(invalidFrames.size).toEqual(0);
+    });
+
+    it("should return errors about empty frames", () => {
+      const frames = iconsWithEmptyFramesErrors as SceneNode[];
+      const { areValid, invalidFrames } = validateFrames(frames);
+
+      expect(areValid).toBeFalsy();
+      expect(invalidFrames.size).toEqual(1);
+      expect(invalidFrames.has("empty")).toBeTruthy();
     });
   });
 

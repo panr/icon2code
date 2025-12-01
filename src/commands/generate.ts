@@ -16,11 +16,9 @@ export const generateCommand = new MessageCommand((msg) => {
   message.counter = frames.length;
 
   // Handle empty frames errors.
-  const emptyFramesOrComponents = frames
-    .filter((node) => !node.children.length)
-    .map((node) => node.name);
-  if (emptyFramesOrComponents.length) {
-    message.errorFrames = emptyFramesOrComponents;
+  const { areValid, invalidFrames } = validateFrames(frames);
+  if (!areValid) {
+    message.errorFrames = [...invalidFrames];
     figma.ui.postMessage(message);
     return;
   }
@@ -92,7 +90,6 @@ export function createIcons(frames: Frame[], options?: CreateIconsOptions) {
     };
 
     if (Array.isArray(child.fills) && child.fills[0]) {
-      // if (child.fills !== figma?.mixed && Array.isArray(child.fills) && child.fills[0]) {
       const fills = child.fills[0];
       const { r, g, b } = fills.color;
       const { opacity } = fills;
@@ -120,4 +117,19 @@ export function createIcons(frames: Frame[], options?: CreateIconsOptions) {
     iconsWithError,
     iconsWithSameName,
   };
+}
+
+export function validateFrames(frames: SceneNode[]) {
+  let areValid = true;
+  const invalidFrames = new Set<string>();
+
+  for (const frame of frames) {
+    const isInvalid = !supportsVisibleChildren(frame) || !frame?.children?.length;
+    if (isInvalid && frame.visible) {
+      areValid = false;
+      invalidFrames.add(frame.name);
+    }
+  }
+
+  return { areValid, invalidFrames };
 }
