@@ -20,7 +20,7 @@ export function supportsVisibleChildren(
 }
 
 export function reducePrecision(pathData: string) {
-  return pathData.replace(/-?\d*\.?\d+/g, (match) => {
-    return parseFloat(match).toFixed(2).toString();
-  });
+  // This matches numbers and scientific notation.
+  const regex = /-?\d*\.?\d+(?:e[+-]?\d+)?/gi;
+  return pathData.replace(regex, (m) => Number(m).toFixed(2));
 }

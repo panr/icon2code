@@ -1,4 +1,4 @@
-const iconsWithNoErrors = require("./tests/mocks/figma-data/icons-with-no-errors").default;
+const iconsWithNoErrors = require("./tests/mocks/figma-data/icons").default;
 
 global.figma = {
   // Core methods

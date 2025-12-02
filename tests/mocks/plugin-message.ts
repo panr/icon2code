@@ -2,7 +2,7 @@ import iconsWithHighPrecision from "./plugin-data/icons-with-default-precision";
 import iconsWithReducedPrecision from "./plugin-data/icons-with-reduced-precision";
 
 export const generateMessage = {
-  counter: 3,
+  counter: Object.keys(iconsWithHighPrecision).length,
   errorIcons: [],
   errorNames: [],
   errorFrames: [],
@@ -10,7 +10,7 @@ export const generateMessage = {
 };
 
 export const generateMessageWithReducedPrecision = {
-  counter: 3,
+  counter: Object.keys(iconsWithHighPrecision).length,
   errorIcons: [],
   errorNames: [],
   errorFrames: [],
